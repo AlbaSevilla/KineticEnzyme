@@ -15,6 +15,9 @@
 #' @param het Logical value indicating whether to introduce heteroscedasticity in the samples. Default is TRUE.
 #' @return A data frame with the generated samples, including the substrate (S) values, the observed velocity (v),
 #'   and the model-predicted velocity (vmod) based on the M-M equation.
+#' @examples
+#' data<-SimMMKineticEnzyme(n=20,vm=1,km=0.3)
+#' plot(data$s,data$v)
 #'@encoding UTF-8
 #'@export SimMMKineticEnzyme
 

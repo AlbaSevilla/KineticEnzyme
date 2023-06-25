@@ -18,6 +18,11 @@
 #' \item{StandardErrorkic}{The standard error associated with the estimated inhibition constant (Kic).}
 #' \item{StandardErrorkiu}{The standard error associated with the estimated uncompetitive inhibition constant (Kiu).}
 #'
+#' @examples
+#' f<-"https://www.ugr.es/~bioest/data/inhibicionnc.txt"
+#' datos<-read.table(f,sep=",",header = T)
+#' AcompetitiveKineticEnzyme(sb=datos$substrate,rate=datos$rate,inh=datos$inhibitor)
+#'
 #' @encoding UTF-8
 #' @export AcompetitiveKineticEnzyme
 
@@ -32,9 +37,6 @@ AcompetitiveKineticEnzyme <- function(sb, rate, inh){
   library(minpack.lm)
   library(lmtest)
 
-  sb<-datos$substrate
-  rate<-datos$rate
-  inh<-datos$inhibitor
   # DATA
   km <- unname(summary(sb)[2])
   vm <- max(rate)
@@ -96,10 +98,6 @@ AcompetitiveKineticEnzyme <- function(sb, rate, inh){
 
   # Return the estimated parameters
   Resultados <- list(AIC = Akaike, BIC = Bayesian,logLike=logLike,Km = km, Vm = vm, Kic = kic, Kiu = kiu, StandardErrorvm=stderrorvm, StandardErrorkm=stderrorkm,
-                           StandardErrorkic=stderrorkic, StandardErrorkiu=stderrorkiu,ResidualStandardError=coeficientedeterminacion)
+                     StandardErrorkic=stderrorkic, StandardErrorkiu=stderrorkiu,ResidualStandardError=coeficientedeterminacion)
   return(Resultados)
 }
-
-f<-"https://www.ugr.es/~bioest/data/inhibicionnc.txt"
-datos<-read.table(f,sep=",",header = T)
-datos

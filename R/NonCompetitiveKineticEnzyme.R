@@ -30,6 +30,12 @@
 #' \item{StandardErrorkic}{The standard error associated with the estimated inhibition constant (Kic).}
 #' \item{StandardErrorkiu}{The standard error associated with the estimated uncompetitive inhibition constant (Kiu).}
 #'
+#' @examples
+#' f<-"https://www.ugr.es/~bioest/data/inhibicionnc.txt"
+#' datos<-read.table(f,sep=",",header = T)
+#' head(datos)
+#' NonCompetitiveKineticEnzyme(sb=datos$substrate,rate=datos$rate,inh=datos$inhibitor)
+#'
 #' @export NonCompetitiveKineticEnzyme
 #' @encoding UTF-8
 

@@ -27,6 +27,10 @@
 #' \item{Standard error for Km}{Standard error of the Michaelis constant parameter for each model.}
 #' \item{Standard error for Kic}{Standard error of the inhibitor constant parameter for each model.}
 #' \item{Standard error for Kiu}{Standard error of the uncompetitive inhibitor constant parameter for each model.}
+#' @examples
+#' f<-"https://www.ugr.es/~bioest/data/inhibicionnc.txt"
+#' data<-read.table(f,sep=",",header = T)
+#' InhibitionComparisonKineticEnzyme(sb=data$substrate,inh=data$inhibitor,rate=data$rate)
 #'
 #' @export InhibitionComparisonKineticEnzyme
 #' @encoding UTF-8

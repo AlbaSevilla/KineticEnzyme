@@ -11,6 +11,9 @@
 #' @param inhtype Specifies the type of inhibition to use. It can be "com" (competitive), "aco" (antagonistic) or "noc" (non-competitive).
 #' @param sigma This is the standard deviation used to introduce variability into the generated data.
 #' @param het A boolean value indicating whether to generate heterogeneous data (with variability) or not. If TRUE, a variability is applied to the generated data. description
+#' @examples
+#' data <- SimINHKineticEnzyme(n = 10, vm = 1, ks = 0.3, ki = 1, srange = c(0, 1), sinc = 0.01, inh = c(0, 1, 2), inhtype = "com", sigma = 0.06, het = TRUE)
+#' plot(data$s,data$v)
 #'@encoding UTF-8
 #'@export SimINHKineticEnzyme
 
