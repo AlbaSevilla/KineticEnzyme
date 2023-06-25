@@ -31,3 +31,10 @@ It estimates the parameters of the model using the nlsLM function from the minpa
 The function also calculates the standard errors of the estimated parameters and provides
 additional analysis results such as the Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC).
 }
+\examples{
+s<-c(0.5,1.0,2.4,4.4,7.0,8.0,13.1,17.6,20.2,30.0)
+v<-c(2.12,3.33,4.90,6.22,7.01,7.51,7.87,8.44,8.76,8.98)
+data <- cbind(s,v)
+data<-data.frame(data)
+MMKineticEnzyme(substrate=data$s,velocity=data$v,removeoutliers=TRUE)
+}

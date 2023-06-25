@@ -41,3 +41,7 @@ A data frame with the generated samples, including the substrate (S) values, the
 This function generates samples for the Monod-Michel (M-M) equation, which describes the
 relationship between the concentration of a substrate and the rate of an enzymatic reaction.
 }
+\examples{
+data<-SimMMKineticEnzyme(n=20,vm=1,km=0.3)
+plot(data$s,data$v)
+}

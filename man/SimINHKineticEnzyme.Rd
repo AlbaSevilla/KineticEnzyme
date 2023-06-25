@@ -42,3 +42,7 @@ SimINHKineticEnzyme(
 \description{
 This function generates samples for the Michaelis Menten equation for inhibition cases.
 }
+\examples{
+data <- SimINHKineticEnzyme(n = 10, vm = 1, ks = 0.3, ki = 1, srange = c(0, 1), sinc = 0.01, inh = c(0, 1, 2), inhtype = "com", sigma = 0.06, het = TRUE)
+plot(data$s,data$v)
+}

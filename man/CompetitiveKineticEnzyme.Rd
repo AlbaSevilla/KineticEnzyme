@@ -30,3 +30,10 @@ A data frame containing the estimated parameters and other analysis results. The
 \description{
 This function fits the Competitive Inhibition model to the given data using the least squares method. The Competitive Inhibition model describes the enzyme kinetics in the presence of a competitive inhibitor.
 }
+\examples{
+f<-"https://www.ugr.es/~bioest/data/inhibicionnc.txt"
+datos<-read.table(f,sep=",",header = T)
+head(datos)
+CompetitiveKineticEnzyme(sb=datos$substrate,rate=datos$rate,inh=datos$inhibitor)
+
+}

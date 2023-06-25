@@ -37,3 +37,10 @@ It estimates the parameters Km, Vm, Kic, and Kiu using the nonlinear least squar
 The function also provides a plot of the fitted lines and returns a data frame containing the
 estimated parameters and other analysis results.
 }
+\examples{
+f<-"https://www.ugr.es/~bioest/data/inhibicionnc.txt"
+datos<-read.table(f,sep=",",header = T)
+head(datos)
+NonCompetitiveKineticEnzyme(sb=datos$substrate,rate=datos$rate,inh=datos$inhibitor)
+
+}

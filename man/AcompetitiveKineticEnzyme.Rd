@@ -30,3 +30,9 @@ A data frame containing the estimated parameters and other analysis results. The
 \description{
 This function fits the acompetitive inhibition model to the given data. Acompetitive inhibition occurs when an inhibitor binds to both the enzyme and the enzyme-substrate complex, reducing the reaction rate. This function estimates the parameters of the acompetitive inhibition model using non-linear least squares fitting.
 }
+\examples{
+f<-"https://www.ugr.es/~bioest/data/inhibicionnc.txt"
+datos<-read.table(f,sep=",",header = T)
+AcompetitiveKineticEnzyme(sb=datos$substrate,rate=datos$rate,inh=datos$inhibitor)
+
+}
