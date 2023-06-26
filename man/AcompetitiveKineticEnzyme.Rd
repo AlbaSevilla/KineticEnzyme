@@ -20,12 +20,10 @@ A data frame containing the estimated parameters and other analysis results. The
 \item{BIC}{The Bayesian Information Criterion (BIC) value for model selection.}
 \item{Km}{The estimated Michaelis-Menten constant.}
 \item{Vm}{The estimated maximum reaction rate.}
-\item{Kic}{The estimated inhibition constant.}
-\item{Kiu}{The estimated uncompetitive inhibition constant.}
+\item{kic}{The estimated inhibition constant.}
 \item{StandardErrorvm}{The standard error associated with the estimated maximum reaction rate (Vm).}
 \item{StandardErrorkm}{The standard error associated with the estimated Michaelis-Menten constant (Km).}
-\item{StandardErrorkic}{The standard error associated with the estimated inhibition constant (Kic).}
-\item{StandardErrorkiu}{The standard error associated with the estimated uncompetitive inhibition constant (Kiu).}
+\item{StandardErrorkic}{The standard error associated with the estimated inhibition constant (kic).}
 }
 \description{
 This function fits the acompetitive inhibition model to the given data. Acompetitive inhibition occurs when an inhibitor binds to both the enzyme and the enzyme-substrate complex, reducing the reaction rate. This function estimates the parameters of the acompetitive inhibition model using non-linear least squares fitting.

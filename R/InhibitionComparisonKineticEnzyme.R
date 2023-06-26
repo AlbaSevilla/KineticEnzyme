@@ -25,7 +25,7 @@
 #' \item{BIC}{Bayesian Information Criterion for each model.}
 #' \item{Standard error for Vm}{Standard error of the maximum velocity parameter for each model.}
 #' \item{Standard error for Km}{Standard error of the Michaelis constant parameter for each model.}
-#' \item{Standard error for Kic}{Standard error of the inhibitor constant parameter for each model.}
+#' \item{Standard error for kic}{Standard error of the inhibitor constant parameter for each model.}
 #' \item{Standard error for Kiu}{Standard error of the uncompetitive inhibitor constant parameter for each model.}
 #' @examples
 #' f<-"https://www.ugr.es/~bioest/data/inhibicionnc.txt"
@@ -41,10 +41,14 @@ InhibitionComparisonKineticEnzyme <- function(sb, rate, inh) {
   if (!requireNamespace("minpack.lm", quietly = TRUE))
     install.packages("minpack.lm", repos = "https://cran.r-project.org/src/contrib/minpack.lm_1.2-3.tar.gz", type = "source")
   if (!requireNamespace("lmtest", quietly = TRUE))
-    install.packages("lmtest",repos="https://cran.r-project.org/src/contrib/lmtest_0.9-40.tar.gz",type="source")
+    install.packages("lmtest", repos = "https://cran.r-project.org/src/contrib/lmtest_0.9-40.tar.gz", type = "source")
+  if (!requireNamespace("dplyr", quietly = TRUE))
+    install.packages("dplyr")
+
   library(car)
   library(minpack.lm)
   library(lmtest)
+  library(dplyr)
 
   par(mfrow = c(2, 2))
 
@@ -54,12 +58,10 @@ InhibitionComparisonKineticEnzyme <- function(sb, rate, inh) {
   noncompetitivelogLike<-noncompetitive$logLike
   noncompetitiveKm <- noncompetitive$Km
   noncompetitiveVm <- noncompetitive$Vm
-  noncompetitiveKic <- noncompetitive$Kic
-  noncompetitiveKiu <- noncompetitive$Kiu
+  noncompetitivekic <- noncompetitive$kic
   noncompetitiveStandardErrorKm <- noncompetitive$StandardErrorkm
   noncompetitiveStandardErrorVm <- noncompetitive$StandardErrorvm
-  noncompetitiveStandardErrorKic <- noncompetitive$StandardErrorkic
-  noncompetitiveStandardErrorKiu <- noncompetitive$StandardErrorkiu
+  noncompetitiveStandardErrorkic <- noncompetitive$StandardErrorkic
 
   competitive <- KineticEnzyme::CompetitiveKineticEnzyme(sb, rate, inh)
   competitiveAIC <- competitive$AIC
@@ -67,12 +69,10 @@ InhibitionComparisonKineticEnzyme <- function(sb, rate, inh) {
   competitivelogLike<-competitive$logLike
   competitiveKm <- competitive$Km
   competitiveVm <- competitive$Vm
-  competitiveKic <- competitive$Kic
-  competitiveKiu <- competitive$Kiu
+  competitivekic <- competitive$kic
   competitiveStandardErrorKm <- competitive$StandardErrorkm
   competitiveStandardErrorVm <- competitive$StandardErrorvm
-  competitiveStandardErrorKic <- competitive$StandardErrorkic
-  competitiveStandardErrorKiu <- competitive$StandardErrorkiu
+  competitiveStandardErrorkic <- competitive$StandardErrorkic
 
   acompetitive <- KineticEnzyme::AcompetitiveKineticEnzyme(sb, rate, inh)
   acompetitiveAIC <- acompetitive$AIC
@@ -80,12 +80,10 @@ InhibitionComparisonKineticEnzyme <- function(sb, rate, inh) {
   acompetitivelogLike<-acompetitive$logLike
   acompetitiveKm <- acompetitive$Km
   acompetitiveVm <- acompetitive$Vm
-  acompetitiveKic <- acompetitive$Kic
-  acompetitiveKiu <- acompetitive$Kiu
+  acompetitivekic <- acompetitive$kic
   acompetitiveStandardErrorKm <- acompetitive$StandardErrorkm
   acompetitiveStandardErrorVm <- acompetitive$StandardErrorvm
-  acompetitiveStandardErrorKic <- acompetitive$StandardErrorkic
-  acompetitiveStandardErrorKiu <- acompetitive$StandardErrorkiu
+  acompetitiveStandardErrorkic <- acompetitive$StandardErrorkic
 
   vAIC <- c(noncompetitiveAIC, competitiveAIC, acompetitiveAIC)
   vAICcolnames <- c("Non competitive", "Competitive", "Acompetitive")
@@ -102,38 +100,32 @@ InhibitionComparisonKineticEnzyme <- function(sb, rate, inh) {
   mayorlogLike <- max(vlogLike)
   mayorlogLikecolname <- vlogLikecolnames[which.max(vlogLike)]
 
-  StandardErrorVm <- c(noncompetitiveVm, competitiveVm, acompetitiveVm)
+  StandardErrorVm <- c(noncompetitiveStandardErrorVm, competitiveStandardErrorVm, acompetitiveStandardErrorVm)
   StandardErrorVmcolnames <- c("Non competitive", "Competitive", "Acompetitive")
   menorStandardErrorVm <- min(StandardErrorVm)
   menorStandardErrorVmcolname <- StandardErrorVmcolnames[which.min(StandardErrorVm)]
 
-  StandardErrorKm <- c(noncompetitiveKm, competitiveKm, acompetitiveKm)
+  StandardErrorKm <- c(noncompetitiveStandardErrorKm, competitiveStandardErrorKm, acompetitiveStandardErrorKm)
   StandardErrorKmcolnames <- c("Non competitive", "Competitive", "Acompetitive")
   menorStandardErrorKm <- min(StandardErrorKm)
   menorStandardErrorKmcolname <- StandardErrorKmcolnames[which.min(StandardErrorKm)]
 
-  StandardErrorKic <- c(noncompetitiveKic, competitiveKic, acompetitiveKic)
-  StandardErrorKiccolnames <- c("Non competitive", "Competitive", "Acompetitive")
-  menorStandardErrorKic <- min(StandardErrorKic)
-  menorStandardErrorKiccolname <- StandardErrorKiccolnames[which.min(StandardErrorKic)]
-
-  StandardErrorKiu <- c(noncompetitiveKiu, competitiveKiu, acompetitiveKiu)
-  StandardErrorKiucolnames <- c("Non competitive", "Competitive", "Acompetitive")
-  menorStandardErrorKiu <- min(StandardErrorKiu)
-  menorStandardErrorKiucolname <- StandardErrorKiucolnames[which.min(StandardErrorKiu)]
+  StandardErrorkic <- c(noncompetitiveStandardErrorkic, competitiveStandardErrorkic, acompetitiveStandardErrorkic)
+  StandardErrorkiccolnames <- c("Non competitive", "Competitive", "Acompetitive")
+  menorStandardErrorkic <- min(StandardErrorkic)
+  menorStandardErrorkiccolname <- StandardErrorkiccolnames[which.min(StandardErrorkic)]
 
   AIC <- c(noncompetitiveAIC, competitiveAIC, acompetitiveAIC)
   BIC <- c(noncompetitiveBIC, competitiveBIC, acompetitiveBIC)
   logLike <- c(noncompetitivelogLike, competitivelogLike, acompetitivelogLike)
   StandardErrorVm <- c(noncompetitiveStandardErrorVm, competitiveStandardErrorVm, acompetitiveStandardErrorVm)
   StandardErrorKm <- c(noncompetitiveStandardErrorKm, competitiveStandardErrorKm, acompetitiveStandardErrorKm)
-  StandardErrorKic <- c(noncompetitiveStandardErrorKic, competitiveStandardErrorKic, acompetitiveStandardErrorKic)
-  StandardErrorKiu <- c(noncompetitiveStandardErrorKiu, competitiveStandardErrorKiu, acompetitiveStandardErrorKiu)
+  StandardErrorkic <- c(noncompetitiveStandardErrorkic, competitiveStandardErrorkic, acompetitiveStandardErrorkic)
 
-  df <- matrix(c(AIC, BIC,logLike, StandardErrorVm, StandardErrorKm, StandardErrorKic, StandardErrorKiu), ncol = 7, byrow = FALSE)
+  df <- matrix(c(AIC, BIC,logLike, StandardErrorVm, StandardErrorKm, StandardErrorkic), ncol = 6, byrow = FALSE)
   rownames(df) <- c("Non competitive", "Competitive", "Acompetitive")
   colnames(df) <- c("AIC", "BIC","logLike", "Standard error for Vm", "Standard error for Km",
-                    "Standard error for Kic", "Standard error for Kiu")
+                    "Standard error for kic")
 
   # Which model is better?
   cat("The smallest value of the AIC is:", menorAIC, "corresponding to the model of", menorAICcolname, "\n")
@@ -141,7 +133,6 @@ InhibitionComparisonKineticEnzyme <- function(sb, rate, inh) {
   cat("The biggest value of the Log Likelihood is:", mayorlogLike, "corresponding to the model of", mayorlogLikecolname, "\n")
   cat("The model with the smallest standard error of Vm is:", menorStandardErrorVm, "corresponding to the model of", menorStandardErrorVmcolname, "\n")
   cat("The model with the smallest standard error of Km is:", menorStandardErrorKm, "corresponding to the model of", menorStandardErrorKmcolname, "\n")
-  cat("The model with the least standard error of Kic is:", menorStandardErrorKic, "corresponding to the model of", menorStandardErrorKiccolname, "\n")
-  cat("The model with the smallest standard error of Kiu is:", menorStandardErrorKiu, "corresponding to the model of", menorStandardErrorKiucolname, "\n")
+  cat("The model with the least standard error of kic is:", menorStandardErrorkic, "corresponding to the model of", menorStandardErrorkiccolname, "\n")
   return(df)
 }

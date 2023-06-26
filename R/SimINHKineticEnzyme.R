@@ -17,7 +17,7 @@
 #'@encoding UTF-8
 #'@export SimINHKineticEnzyme
 
-SimINHKineticEnzyme<-function(n=0,vm=1,ks=0.3,ki=1,srange=c(0,1), sinc=0.1,inh=c(0,1,2),inhtype="com", sigma=0.06,het=TRUE){
+SimINHKineticEnzyme<-function(n=0,vm=1,ks=0.3,ki=1,srange=c(0,1), sinc=0.1,inh=c(1,2,3),inhtype="com", sigma=0.06,het=TRUE){
 
   if (n>0) {x<-seq(from=srange[[1]],to=srange[[2]],length.out=n)}
   else     {x<-seq(from=srange[[1]],to=srange[[2]],by=sinc)}

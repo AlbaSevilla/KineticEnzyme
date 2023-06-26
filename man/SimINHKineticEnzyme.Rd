@@ -12,7 +12,7 @@ SimINHKineticEnzyme(
   ki = 1,
   srange = c(0, 1),
   sinc = 0.1,
-  inh = c(0, 1, 2),
+  inh = c(1, 2, 3),
   inhtype = "com",
   sigma = 0.06,
   het = TRUE

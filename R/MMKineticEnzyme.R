@@ -132,19 +132,19 @@ MMKineticEnzyme <- function(substrate,velocity,removeoutliers=FALSE) {
 
   errores_matriz_covarianza<-sqrt(diag(vcov(fit)))
   errorvm_linealizacion <- errores_matriz_covarianza[1]
-  errorkm_linealizacion <- errores_matriz_covarianza[1]
+  errorkm_linealizacion <- errores_matriz_covarianza[2]
 
   std_error<-summary(fit)$coef[,2]
   errorvm<-std_error[1]
   errorkm<-std_error[2]
 
   # Return the estimated parameters
-  Resultados <- data.frame(AIC = AIC, BIC = BIC,
+  Resultados <- list(AIC = AIC, BIC = BIC,
                            logLike=logLike,
                            vmax=vmax, km=km,
                            StandardErrorvm=errorvm, StandardErrorkm=errorkm,
                            StandardErrorvm_linealizacion=errorvm_linealizacion,
-                           StandardErrorkm_linealizacion=errorkm_linealizacion)
-  rownames(Resultados) <- c("Estimation")
+                           StandardErrorkm_linealizacion=errorkm_linealizacion,
+                           ConfidenceIntervalVmax=vmax_ci,ConfidenceIntervalKm=Km_ci)
   return(Resultados)
 }

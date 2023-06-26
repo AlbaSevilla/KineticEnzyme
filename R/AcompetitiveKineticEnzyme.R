@@ -11,12 +11,10 @@
 #' \item{BIC}{The Bayesian Information Criterion (BIC) value for model selection.}
 #' \item{Km}{The estimated Michaelis-Menten constant.}
 #' \item{Vm}{The estimated maximum reaction rate.}
-#' \item{Kic}{The estimated inhibition constant.}
-#' \item{Kiu}{The estimated uncompetitive inhibition constant.}
+#' \item{kic}{The estimated inhibition constant.}
 #' \item{StandardErrorvm}{The standard error associated with the estimated maximum reaction rate (Vm).}
 #' \item{StandardErrorkm}{The standard error associated with the estimated Michaelis-Menten constant (Km).}
-#' \item{StandardErrorkic}{The standard error associated with the estimated inhibition constant (Kic).}
-#' \item{StandardErrorkiu}{The standard error associated with the estimated uncompetitive inhibition constant (Kiu).}
+#' \item{StandardErrorkic}{The standard error associated with the estimated inhibition constant (kic).}
 #'
 #' @examples
 #' f<-"https://www.ugr.es/~bioest/data/inhibicionnc.txt"
@@ -32,38 +30,53 @@ AcompetitiveKineticEnzyme <- function(sb, rate, inh){
   if (!requireNamespace("minpack.lm", quietly = TRUE))
     install.packages("minpack.lm", repos = "https://cran.r-project.org/src/contrib/minpack.lm_1.2-3.tar.gz", type = "source")
   if (!requireNamespace("lmtest", quietly = TRUE))
-    install.packages("lmtest",repos="https://cran.r-project.org/src/contrib/lmtest_0.9-40.tar.gz",type="source")
+    install.packages("lmtest", repos = "https://cran.r-project.org/src/contrib/lmtest_0.9-40.tar.gz", type = "source")
+  if (!requireNamespace("dplyr", quietly = TRUE))
+    install.packages("dplyr")
+
   library(car)
   library(minpack.lm)
   library(lmtest)
+  library(dplyr)
 
   # DATA
-  km <- unname(summary(sb)[2])
-  vm <- max(rate)
-  kic <- median(inh)
-  kiu <- kic/3
+  dataset <- data.frame(sb, inh,rate)
+
+  # initial values for the parameters (considering the L-B's transformation)
+
+  condition<-(dataset$sb>0 & dataset$rate>0)
+  dataset2<-subset.data.frame(dataset,condition)
+  dataset2$invsb <- 1/dataset2$sb
+  dataset2$invrate <- 1/dataset2$rate
+  lb<-lm(dataset2$invrate~dataset2$invsb)
+  vm<-1/coefficients(lb)[1]
+  km<-coefficients(lb)[2]*vm
+  kic<-1
 
   # Lineweaver Burk data
-  dataset <- data.frame(sb, rate, inh)
   dataset$inv.sb <- 1/dataset$sb
   dataset$inv.rate <- 1/dataset$rate
+
+  #Dataset without infinite data
+  dataset <- dataset %>%
+    filter_all(all_vars(!is.infinite(.)))
 
   # How many unique inhibitors are there?
   inh.sb <- unique(dataset$inh)
 
   # Competitive fit
-  acompetitive_nls <- nls(rate ~ ((vm * sb) / ((Km + sb) * (1 + inh/Kiu))),
-                          data = dataset, start = list(Km = km, vm = vm, Kiu = kiu))
+  acompetitive_nls <- nls(rate ~ ((vm * sb) / (Km + sb * (1 + inh/kic))),
+                          data = dataset, start = list(Km = km, vm = vm, kic = kic))
 
   #Coefficientes
   acompetitive_km <- unname(coef(acompetitive_nls)["Km"])
   acompetitive_vm <- unname(coef(acompetitive_nls)["vm"])
-  acompetitive_kiu <- unname(coef(acompetitive_nls)["Kiu"])
+  acompetitive_kic <- unname(coef(acompetitive_nls)["kic"])
 
   #Fitted Values
   fitted_values <- expand.grid(x = sb, inhib = inh.sb)
   fitted_values$inv.x <- 1/fitted_values$x
-  fitted_values$predict <- (acompetitive_vm * fitted_values$x) / (acompetitive_km + fitted_values$x * (1 + fitted_values$inhib/acompetitive_kiu))
+  fitted_values$predict <- (acompetitive_vm * fitted_values$x) / (acompetitive_km + fitted_values$x * (1 + fitted_values$inhib/acompetitive_kic))
   fitted_values$inv.predict <- 1/fitted_values$predict
 
   ######################################################################
@@ -83,21 +96,19 @@ AcompetitiveKineticEnzyme <- function(sb, rate, inh){
 
   Akaike<-AIC(acompetitive_nls)
   Bayesian<-BIC(acompetitive_nls)
-  logLike <- logLik(acompetitive_nls)
+  logLike<-logLik(acompetitive_nls)
   summary <- (summary(acompetitive_nls))
   km <- summary$coefficients[1,1]
-  vm <- summary$coefficients[1,2]
-  kic <- summary$coefficients[1,3]
-  kiu <- summary$coefficients[1,4]
-  stderrorkm <- summary$coefficients[2,1]
+  vm <- summary$coefficients[2,1]
+  kic <- summary$coefficients[3,1]
+  stderrorkm <- summary$coefficients[1,2]
   stderrorvm <- summary$coefficients[2,2]
-  stderrorkic <- summary$coefficients[2,3]
-  stderrorkiu <- summary$coefficients[2,4]
+  stderrorkic <- summary$coefficients[3,2]
   resumen <- summary(acompetitive_nls)
   coeficientedeterminacion<-resumen$sigma
 
   # Return the estimated parameters
-  Resultados <- list(AIC = Akaike, BIC = Bayesian,logLike=logLike,Km = km, Vm = vm, Kic = kic, Kiu = kiu, StandardErrorvm=stderrorvm, StandardErrorkm=stderrorkm,
-                     StandardErrorkic=stderrorkic, StandardErrorkiu=stderrorkiu,ResidualStandardError=coeficientedeterminacion)
+  Resultados <- list(AIC = Akaike, BIC = Bayesian,logLike=logLike,Km = km, Vm = vm, kic = kic,StandardErrorvm=stderrorvm, StandardErrorkm=stderrorkm,
+                     StandardErrorkic=stderrorkic,ResidualStandardError=coeficientedeterminacion)
   return(Resultados)
 }

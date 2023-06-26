@@ -11,13 +11,10 @@
 #' \item{BIC}{The Bayesian Information Criterion (BIC) value for model selection.}
 #' \item{Km}{The estimated Michaelis-Menten constant.}
 #' \item{Vm}{The estimated maximum reaction rate.}
-#' \item{Kic}{The estimated inhibition constant.}
-#' \item{Kiu}{The estimated uncompetitive inhibition constant.}
+#' \item{kic}{The estimated inhibition constant.}
 #' \item{StandardErrorvm}{The standard error associated with the estimated maximum reaction rate (Vm).}
 #' \item{StandardErrorkm}{The standard error associated with the estimated Michaelis-Menten constant (Km).}
-#' \item{StandardErrorkic}{The standard error associated with the estimated inhibition constant (Kic).}
-#' \item{StandardErrorkiu}{The standard error associated with the estimated uncompetitive inhibition constant (Kiu).}
-#'
+#' \item{StandardErrorkic}{The standard error associated with the estimated inhibition constant (kic).}
 #' @examples
 #' f<-"https://www.ugr.es/~bioest/data/inhibicionnc.txt"
 #' datos<-read.table(f,sep=",",header = T)
@@ -33,28 +30,43 @@ CompetitiveKineticEnzyme <- function(sb,rate,inh){
   if (!requireNamespace("minpack.lm", quietly = TRUE))
     install.packages("minpack.lm", repos = "https://cran.r-project.org/src/contrib/minpack.lm_1.2-3.tar.gz", type = "source")
   if (!requireNamespace("lmtest", quietly = TRUE))
-    install.packages("lmtest",repos="https://cran.r-project.org/src/contrib/lmtest_0.9-40.tar.gz",type="source")
+    install.packages("lmtest", repos = "https://cran.r-project.org/src/contrib/lmtest_0.9-40.tar.gz", type = "source")
+  if (!requireNamespace("dplyr", quietly = TRUE))
+    install.packages("dplyr")
+
   library(car)
   library(minpack.lm)
   library(lmtest)
+  library(dplyr)
 
   # DATA
-  km<-unname(summary(sb)[2])
-  vm<-max(rate)
-  kic<-median(inh)
-  kiu<-kic/3
+  dataset <- data.frame(sb, inh,rate)
 
-  #Lineweaver Burk data
-  dataset <- data.frame(sb,rate,inh)
+  # initial values for the parameters (considering the L-B's transformation)
+
+  condition<-(dataset$sb>0 & dataset$rate>0)
+  dataset2<-subset.data.frame(dataset,condition)
+  dataset2$invsb <- 1/dataset2$sb
+  dataset2$invrate <- 1/dataset2$rate
+  lb<-lm(dataset2$invrate~dataset2$invsb)
+  vm<-1/coefficients(lb)[1]
+  km<-coefficients(lb)[2]*vm
+  kic<-1
+
+  # Lineweaver Burk data
   dataset$inv.sb <- 1/dataset$sb
   dataset$inv.rate <- 1/dataset$rate
+
+  #Dataset without infinite data
+  dataset <- dataset %>%
+    filter_all(all_vars(!is.infinite(.)))
 
   #How many unique of inhibitor are?
   inh.sb <- unique(dataset$inh)
 
   # Competitive fit
-  competitive_nls <- nls(rate ~ ((vm * sb) / (Km*(1+inh/Kic) + sb)),
-                         data=dataset, start=list(Km=km, vm=vm, Kic=kic))
+  competitive_nls <- nls(rate ~ ((vm * sb) / (Km*(1+inh/kic) + sb)),
+                         data=dataset, start=list(Km=km, vm=vm, kic=kic))
 
   #Coefficients
   competitive_km <- unname(coef(competitive_nls)[1])
@@ -87,18 +99,16 @@ CompetitiveKineticEnzyme <- function(sb,rate,inh){
   logLike<-logLik(competitive_nls)
   summary <- (summary(competitive_nls))
   km <- summary$coefficients[1,1]
-  vm <- summary$coefficients[1,2]
-  kic <- summary$coefficients[1,3]
-  kiu <- summary$coefficients[1,4]
-  stderrorkm <- summary$coefficients[2,1]
+  vm <- summary$coefficients[2,1]
+  kic <- summary$coefficients[3,1]
+  stderrorkm <- summary$coefficients[1,2]
   stderrorvm <- summary$coefficients[2,2]
-  stderrorkic <- summary$coefficients[2,3]
-  stderrorkiu <- summary$coefficients[2,4]
+  stderrorkic <- summary$coefficients[3,2]
   resumen <- summary(competitive_nls)
   coeficientedeterminacion<-resumen$sigma
 
   # Return the estimated parameters
-  Resultados <- list(AIC = Akaike, BIC = Bayesian,logLike=logLike,Km = km, Vm = vm, Kic = kic, Kiu = kiu, StandardErrorvm=stderrorvm, StandardErrorkm=stderrorkm,
-                     StandardErrorkic=stderrorkic, StandardErrorkiu=stderrorkiu,ResidualStandardError=coeficientedeterminacion)
+  Resultados <- list(AIC = Akaike, BIC = Bayesian,logLike=logLike,Km = km, Vm = vm, kic = kic,StandardErrorvm=stderrorvm, StandardErrorkm=stderrorkm,
+                     StandardErrorkic=stderrorkic,ResidualStandardError=coeficientedeterminacion)
   return(Resultados)
 }
