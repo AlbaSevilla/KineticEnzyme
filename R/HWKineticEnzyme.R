@@ -302,21 +302,24 @@ HWKineticEnzyme <- function(substrate,velocity,removeoutliers=FALSE,deepening=FA
   ##########################################################################################
   ############ Calcular los parámetros estimados en la escala original #####################
   ##########################################################################################
-  #vm=1
-  #km=0.3
   vmax <- 1/one_divide_vm
   km <- km_divide_vm*vmax
   AIC<-AIC(hw_lm)
   BIC<-BIC(hw_lm)
   logLike<-logLik(hw_lm)
   hw_lm_summary <- summary(hw_lm)
+  matrizcovarianza<-vcov(hw_lm)
+  errores_matriz_covarianza<-sqrt(diag(vcov(hw_lm)))
+  covarianza <- matrizcovarianza[1,2]
   errores<-hw_lm_summary$coef[,2]
-  errorvm_delta<-(((errores[2])/(abs(one_divide_vm)))*(abs(vmax)))/(1)
-  errorkm_delta<- (((errores[1]/km_divide_vm^2)-(errorvm_delta^2/vmax^2))*km^2)
+  errorvm_delta<-(((errores[2])/(abs(one_divide_vm)))*(abs(vmax)))/(1)-2*covarianza
+  errorkm_delta<- (((errores[1]/km_divide_vm^2)-(errorvm_delta^2/vmax^2))*km^2)-2*covarianza
   ANOVA<-anova(hw_lm)
   DurbinWatson<-dwtest(hw_lm,alternative='two.sided')
   #Errores estándares
   matrizcovarianza<-vcov(hw_lm)
+  errores_matriz_covarianza<-sqrt(diag(vcov(hw_lm)))
+  covarianza <- matrizcovarianza[1,2]
   errores_matriz_covarianza<-sqrt(diag(vcov(hw_lm)))
   errorvm_linealizacion <- errores_matriz_covarianza[1]
   errorkm_linealizacion <- errores_matriz_covarianza[2]

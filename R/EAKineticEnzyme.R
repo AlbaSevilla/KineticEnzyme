@@ -311,13 +311,17 @@ EAKineticEnzyme <- function(substrate,velocity,removeoutliers=FALSE,deepening=FA
   logLike<-logLik(EadieS_lm)
   EadieS_lm_summary <- summary(EadieS_lm)
   errores<-EadieS_lm_summary$coef[,2]
-  errorkm_delta<-((errores[2]/abs(Km_est))*abs(km))/1
-  errorvm_delta<-((errores[1]/vmax_km^2)-((errorkm_delta)^2/(km^2)))*(vmax^2)
+  matrizcovarianza<-vcov(EadieS_lm)
+  errores_matriz_covarianza<-sqrt(diag(vcov(EadieS_lm)))
+  covarianza <- matrizcovarianza[1,2]
+  errorkm_delta<-((errores[2]/abs(Km_est))*abs(km))/1-2*covarianza
+  errorvm_delta<-((errores[1]/vmax_km^2)-((errorkm_delta)^2/(km^2)))*(vmax^2)-2*covarianza
   ANOVA<-anova(EadieS_lm)
   DurbinWatson<-dwtest(EadieS_lm,alternative='two.sided')
   #Errores estándares
   matrizcovarianza<-vcov(EadieS_lm)
   errores_matriz_covarianza<-sqrt(diag(vcov(EadieS_lm)))
+  covarianza <- matrizcovarianza[1,2]
   errorvm_linealizacion <- errores_matriz_covarianza[1]
   errorkm_linealizacion <- errores_matriz_covarianza[2]
 
