@@ -34,7 +34,7 @@ The function also plots the data and the fitted curves for each model.
 }
 \examples{
 f<-"https://www.ugr.es/~bioest/data/inhibicionnc.txt"
-data<-read.table(f,sep=",",header = T)
+data<-read.table(f,sep=",",header = TRUE)
 InhibitionComparisonKineticEnzyme(sb=data$substrate,inh=data$inhibitor,rate=data$rate)
 
 }

@@ -99,6 +99,20 @@ HWKineticEnzyme <- function(substrate,velocity,removeoutliers=FALSE,deepening=FA
   # Estimamos los parámetros usando regresión lineal
   hw_lm <- lm(y ~ x, data = hw_data)
   hw_lm
+
+  #Ajuste de polinomio de 2º grado
+  y = data$substrate/data$velocity
+  x = data$substrate
+  x_2= (data$substrate)^2
+  hw_lm2 <- lm(y ~ I(x)+I(x_2))
+  summary(hw_lm2)
+  coef2grado<-summary(hw_lm2)$coefficients[3,4]
+  if(coef2grado<0.05){
+    cat("The p-value of the second grade coefficient is", coef2grado, ". So there is evidence to reject the null hypothesis and conclude that the coefficient of the second degree is significantly different from zero. \n")
+  } else {
+    cat("The p-value of the second grade coefficient is", coef2grado, ". So there isn't evidence to reject the null hypothesis and conclude that the coefficient of the second degree isn't significantly different from zero. \n")
+  }
+
   # Obtenemos los parametros estimados
   one_divide_vm <- coef(hw_lm)["x"]
   km_divide_vm <- coef(hw_lm)["(Intercept)"]
@@ -312,7 +326,7 @@ HWKineticEnzyme <- function(substrate,velocity,removeoutliers=FALSE,deepening=FA
                      StandardErrorvm_delta=errorvm_delta, StandardErrorkm_delta=errorkm_delta,
                      StandardErrorvm_linealizacion=errorvm_linealizacion,
                      StandardErrorkm_linealizacion=errorkm_linealizacion,
-                     ANOVA,DurbinWatson)
+                     ANOVA,DurbinWatson,Resumen=hw_lm_summary)
   return(Resultados)
 }
 

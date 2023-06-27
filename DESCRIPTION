@@ -8,7 +8,7 @@ Description: This Enzyme Kinetics package is an advanced tool that fits
             linearizations and performs inhibition adjustments on kinetic data. 
             Provides parameter estimates, standard errors, and residual analysis, 
             as well as confidence bands and AIC and BIC values.
-Imports: car, lmtest, carData, minpack.lm, grDevices, graphics, stats, utils
+Imports: car, lmtest, carData, minpack.lm, grDevices, graphics, stats, utils, dplyr
 License: GPL-2
 Encoding: UTF-8
 LazyData: true

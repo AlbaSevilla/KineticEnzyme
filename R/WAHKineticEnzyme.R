@@ -102,6 +102,19 @@ WAHKineticEnzyme <- function(substrate,velocity,removeoutliers=FALSE,deepening=F
   wah_lm <- lm(y ~ x, data = wah_data)
   wah_lm
 
+  #Ajuste de polinomio de 2º grado
+  y = data$velocity
+  x= data$velocity/data$substrate
+  x_2= (data$velocity/data$substrate)^2
+  wah_lm2 <- lm(y ~ I(x)+I(x_2))
+  summary(wah_lm2)
+  coef2grado<-summary(wah_lm2)$coefficients[3,4]
+  if(coef2grado<0.05){
+    cat("The p-value of the second grade coefficient is", coef2grado, ". So there is evidence to reject the null hypothesis and conclude that the coefficient of the second degree is significantly different from zero. \n")
+  } else {
+    cat("The p-value of the second grade coefficient is", coef2grado, ". So there isn't evidence to reject the null hypothesis and conclude that the coefficient of the second degree isn't significantly different from zero. \n")
+  }
+
 
   # Obtenemos los parámetros estimados
   menos_km <- coef(wah_lm)["x"]
@@ -316,6 +329,6 @@ WAHKineticEnzyme <- function(substrate,velocity,removeoutliers=FALSE,deepening=F
                      StandardErrorvm_delta=errorvm_delta, StandardErrorkm_delta=errorkm_delta,
                      StandardErrorvm_linealizacion=errorvm_linealizacion,
                      StandardErrorkm_linealizacion=errorkm_linealizacion,
-                     ANOVA,DurbinWatson)
+                     ANOVA,DurbinWatson,Resumen=wah_lm_summary)
   return(Resultados)
 }

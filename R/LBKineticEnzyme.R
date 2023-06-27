@@ -93,12 +93,26 @@ LBKineticEnzyme <- function(substrate,velocity,removeoutliers=FALSE,deepening=FA
   lb_data
 
 
+
   ##########################################################################
   ############### PARÁMETROS ###############################################
   ##########################################################################
 
   # Estimamos los parámetros usando regresión lineal
   lb_lm <- lm(y ~ x, data = lb_data)
+
+  #Ajuste de polinomio de 2º grado
+  y = 1/data$velocity
+  x= 1/data$substrate
+  x_2= 1/(data$substrate^2)
+  lb_lm2 <- lm(y ~ I(x)+I(x_2))
+  summary(lb_lm2)
+  coef2grado<-summary(lb_lm2)$coefficients[3,4]
+  if(coef2grado<0.05){
+    cat("The p-value of the second grade coefficient is", coef2grado, ". So there is evidence to reject the null hypothesis and conclude that the coefficient of the second degree is significantly different from zero. \n")
+  } else {
+    cat("The p-value of the second grade coefficient is", coef2grado, ". So there isn't evidence to reject the null hypothesis and conclude that the coefficient of the second degree isn't significantly different from zero. \n")
+  }
 
   #Errores estándares
   matrizcovarianza<-vcov(lb_lm)
@@ -286,6 +300,6 @@ LBKineticEnzyme <- function(substrate,velocity,removeoutliers=FALSE,deepening=FA
                      StandardErrorkm_delta=errorkm_delta,
                      StandardErrorvm_linealizacion=errorvm_linealizacion,
                      StandardErrorkm_linealizacion=errorkm_linealizacion,
-                     ANOVA,DurbinWatson)
+                     ANOVA,DurbinWatson,Resumen=lb_lm_summary)
   return(Resultados)
 }

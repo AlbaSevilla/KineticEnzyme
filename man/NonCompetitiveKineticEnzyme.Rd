@@ -37,7 +37,7 @@ estimated parameters and other analysis results.
 }
 \examples{
 f<-"https://www.ugr.es/~bioest/data/inhibicionnc.txt"
-datos<-read.table(f,sep=",",header = T)
+datos<-read.table(f,sep=",",header = TRUE)
 head(datos)
 NonCompetitiveKineticEnzyme(sb=datos$substrate,rate=datos$rate,inh=datos$inhibitor)
 

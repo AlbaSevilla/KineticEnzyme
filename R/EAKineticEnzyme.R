@@ -106,6 +106,20 @@ EAKineticEnzyme <- function(substrate,velocity,removeoutliers=FALSE,deepening=FA
   # Estimamos los parámetros usando regresión lineal
   EadieS_lm <- lm(y ~ x, data = EadieS_data)
   EadieS_lm
+
+  #Ajuste de polinomio de 2º grado
+  y = data$velocity/data$substrate
+  x = data$velocity
+  x_2 = data$velocity^2
+  EadieS_lm2 <- lm(y ~ I(x)+I(x_2))
+  summary(EadieS_lm2)
+  coef2grado<-summary(EadieS_lm2)$coefficients[3,4]
+  if(coef2grado<0.05){
+    cat("The p-value of the second grade coefficient is", coef2grado, ". So there is evidence to reject the null hypothesis and conclude that the coefficient of the second degree is significantly different from zero. \n")
+  } else {
+    cat("The p-value of the second grade coefficient is", coef2grado, ". So there isn't evidence to reject the null hypothesis and conclude that the coefficient of the second degree isn't significantly different from zero. \n")
+  }
+
   # Obtenemos los parámetros estimados
   Km_est <- coef(EadieS_lm)["x"]
   vmax_km <- coef(EadieS_lm)["(Intercept)"]
@@ -312,6 +326,6 @@ EAKineticEnzyme <- function(substrate,velocity,removeoutliers=FALSE,deepening=FA
                      StandardErrorvm_delta=errorvm_delta, StandardErrorkm_delta=errorkm_delta,
                      StandardErrorvm_linealizacion=errorvm_linealizacion,
                      StandardErrorkm_linealizacion=errorkm_linealizacion,
-                     ANOVA,DurbinWatson)
+                     ANOVA,DurbinWatson,Resumen=EadieS_lm_summary)
   return(Resultados)
 }

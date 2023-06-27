@@ -14,6 +14,7 @@
 #' @import car
 #' @import lmtest
 #' @import carData
+#' @import dplyr
 #'
 #' @param sb A vector or column of substrate concentrations.
 #' @param rate A vector or column of corresponding reaction rates.
@@ -29,7 +30,7 @@
 #' \item{Standard error for Kiu}{Standard error of the uncompetitive inhibitor constant parameter for each model.}
 #' @examples
 #' f<-"https://www.ugr.es/~bioest/data/inhibicionnc.txt"
-#' data<-read.table(f,sep=",",header = T)
+#' data<-read.table(f,sep=",",header = TRUE)
 #' InhibitionComparisonKineticEnzyme(sb=data$substrate,inh=data$inhibitor,rate=data$rate)
 #'
 #' @export InhibitionComparisonKineticEnzyme
@@ -43,7 +44,7 @@ InhibitionComparisonKineticEnzyme <- function(sb, rate, inh) {
   if (!requireNamespace("lmtest", quietly = TRUE))
     install.packages("lmtest", repos = "https://cran.r-project.org/src/contrib/lmtest_0.9-40.tar.gz", type = "source")
   if (!requireNamespace("dplyr", quietly = TRUE))
-    install.packages("dplyr")
+    install.packages("dplyr", repos = "https://cran.r-project.org/src/contrib/dplyr_1.1.2.tar.gz", type = "source")
 
   library(car)
   library(minpack.lm)
