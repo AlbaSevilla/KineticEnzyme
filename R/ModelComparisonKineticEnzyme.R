@@ -24,9 +24,6 @@
 #' \item{km}{Estimated Michaelis-Menten constant parameter for each model.}
 #' \item{StandardErrorvm_delta}{Standard error of the estimated maximum velocity parameter for each model using delta method.}
 #' \item{StandardErrorkm_delta}{Standard error of the estimated Michaelis-Menten constant parameter for each model using delta method.}
-#' \item{StandardErrorvm_linealizacion}{Standard error of the estimated maximum velocity parameter for each model using vcov method}
-#' \item{StandardErrorkm_linealizacion}{Standard error of the estimated Michaelis-Menten constant parameter for each model using vcov method.}
-#'
 #'
 #' The row names of the data frame correspond to the names of the enzyme kinetic models.
 #'
@@ -66,8 +63,6 @@ ModelComparisonKineticEnzyme <- function(substrate,velocity){
   michaelismentenkm<-michaelismenten$km
   michaelismentenStandardErrorvm_delta<-michaelismenten$StandardErrorvm
   michaelismentenStandardErrorkm_delta<-michaelismenten$StandardErrorkm
-  michaelismentenStandardErrorvm_linealizacion<-michaelismenten$StandardErrorvm_linealizacion
-  michaelismentenStandardErrorkm_linealizacion<-michaelismenten$StandardErrorkm_linealizacion
 
   lineweaverburk<-KineticEnzyme::LBKineticEnzyme(substrate,velocity)
   lineweaverburkAIC<-lineweaverburk$AIC
@@ -77,8 +72,6 @@ ModelComparisonKineticEnzyme <- function(substrate,velocity){
   lineweaverburkkm<-lineweaverburk$km
   lineweaverburkStandardErrorvm_delta<-lineweaverburk$StandardErrorvm_delta
   lineweaverburkStandardErrorkm_delta<-lineweaverburk$StandardErrorkm_delta
-  lineweaverburkStandardErrorvm_linealizacion<-lineweaverburk$StandardErrorvm_linealizacion
-  lineweaverburkStandardErrorkm_linealizacion<-lineweaverburk$StandardErrorkm_linealizacion
 
   EadieScatchard<-KineticEnzyme::EAKineticEnzyme(substrate,velocity)
   EadieScatchardAIC<-EadieScatchard$AIC
@@ -88,8 +81,6 @@ ModelComparisonKineticEnzyme <- function(substrate,velocity){
   EadieScatchardkm<-EadieScatchard$km
   EadieScatchardStandardErrorvm_delta<-EadieScatchard$StandardErrorvm_delta
   EadieScatchardStandardErrorkm_delta<-EadieScatchard$StandardErrorkm_delta
-  EadieScatchardStandardErrorvm_linealizacion<-EadieScatchard$StandardErrorvm_linealizacion
-  EadieScatchardStandardErrorkm_linealizacion<-EadieScatchard$StandardErrorkm_linealizacion
 
   WoolfAugustinsonHofstee<-KineticEnzyme::WAHKineticEnzyme(substrate,velocity)
   WoolfAugustinsonHofsteeAIC<-WoolfAugustinsonHofstee$AIC
@@ -99,8 +90,6 @@ ModelComparisonKineticEnzyme <- function(substrate,velocity){
   WoolfAugustinsonHofsteekm<-WoolfAugustinsonHofstee$km
   WoolfAugustinsonHofsteeStandardErrorvm_delta<-WoolfAugustinsonHofstee$StandardErrorvm_delta
   WoolfAugustinsonHofsteeStandardErrorkm_delta<-WoolfAugustinsonHofstee$StandardErrorkm_delta
-  WoolfAugustinsonHofsteeStandardErrorvm_linealizacion<-WoolfAugustinsonHofstee$StandardErrorvm_linealizacion
-  WoolfAugustinsonHofsteeStandardErrorkm_linealizacion<-WoolfAugustinsonHofstee$StandardErrorkm_linealizacion
 
   HanesWoolf<-KineticEnzyme::HWKineticEnzyme(substrate,velocity)
   HanesWoolfAIC<-HanesWoolf$AIC
@@ -110,8 +99,6 @@ ModelComparisonKineticEnzyme <- function(substrate,velocity){
   HanesWoolfkm<-HanesWoolf$km
   HanesWoolfStandardErrorvm_delta<-HanesWoolf$StandardErrorvm_delta
   HanesWoolfStandardErrorkm_delta<-HanesWoolf$StandardErrorkm_delta
-  HanesWoolfStandardErrorvm_linealizacion<-HanesWoolf$StandardErrorvm_linealizacion
-  HanesWoolfStandardErrorkm_linealizacion<-HanesWoolf$StandardErrorkm_linealizacion
 
 
   vAIC<-c(michaelismentenAIC,lineweaverburkAIC,EadieScatchardAIC,WoolfAugustinsonHofsteeAIC,HanesWoolfAIC)
@@ -163,27 +150,7 @@ ModelComparisonKineticEnzyme <- function(substrate,velocity){
     }
   }
 
-  StandardErrorkm_linealizacion<-c( michaelismentenStandardErrorkm_linealizacion,lineweaverburkStandardErrorkm_linealizacion,EadieScatchardStandardErrorkm_linealizacion,WoolfAugustinsonHofsteeStandardErrorkm_linealizacion,HanesWoolfStandardErrorkm_linealizacion)
-  StandardErrorkm_linealizacioncolnames<-c("Michaelis Menten","Lineweaver Burk","Eadie Scatchard","Woolf Augustinson Hofstee","Hanes Woolf")
-  menorStandardErrorkm_linealizacion <- StandardErrorkm_linealizacion[1]
-  menorStandardErrorkm_linealizacioncolname <- StandardErrorkm_linealizacioncolnames[1]
-  for(i in seq_along(StandardErrorkm_linealizacion)){
-    if(StandardErrorkm_linealizacion[i] < menorStandardErrorkm_linealizacion){
-      menorStandardErrorkm_linealizacion = StandardErrorkm_linealizacion[i]
-      menorStandardErrorkm_linealizacioncolname = StandardErrorkm_linealizacioncolnames[i]
-    }
-  }
 
-  StandardErrorvm_linealizacion<-c( michaelismentenStandardErrorvm_linealizacion,lineweaverburkStandardErrorvm_linealizacion,EadieScatchardStandardErrorvm_linealizacion,WoolfAugustinsonHofsteeStandardErrorvm_linealizacion,HanesWoolfStandardErrorvm_linealizacion)
-  StandardErrorvm_linealizacioncolnames<-c("Michaelis Menten","Lineweaver Burk","Eadie Scatchard","Woolf Augustinson Hofstee","Hanes Woolf")
-  menorStandardErrorvm_linealizacion <- StandardErrorvm_linealizacion[1]
-  menorStandardErrorvm_linealizacioncolname <- StandardErrorvm_linealizacioncolnames[1]
-  for(i in seq_along(StandardErrorvm_linealizacion)){
-    if(StandardErrorvm_linealizacion[i] < menorStandardErrorvm_linealizacion){
-      menorStandardErrorvm_linealizacion = StandardErrorvm_linealizacion[i]
-      menorStandardErrorvm_linealizacioncolname = StandardErrorvm_linealizacioncolnames[i]
-    }
-  }
 
   AIC <- c(michaelismentenAIC,lineweaverburkAIC,EadieScatchardAIC,WoolfAugustinsonHofsteeAIC,HanesWoolfAIC)
   BIC <- c(michaelismentenBIC,lineweaverburkBIC,EadieScatchardBIC,WoolfAugustinsonHofsteeBIC,HanesWoolfBIC)
@@ -192,17 +159,12 @@ ModelComparisonKineticEnzyme <- function(substrate,velocity){
   km <- c(michaelismentenkm,lineweaverburkkm,EadieScatchardkm,WoolfAugustinsonHofsteekm,HanesWoolfkm)
   StandardErrorvm_delta <- c(michaelismentenStandardErrorvm_delta,lineweaverburkStandardErrorvm_delta,EadieScatchardStandardErrorvm_delta,WoolfAugustinsonHofsteeStandardErrorvm_delta,HanesWoolfStandardErrorvm_delta)
   StandardErrorkm_delta <- c(michaelismentenStandardErrorkm_delta,lineweaverburkStandardErrorkm_delta,EadieScatchardStandardErrorkm_delta,WoolfAugustinsonHofsteeStandardErrorkm_delta,HanesWoolfStandardErrorkm_delta)
-  StandardErrorvm_linealizacion <- c(michaelismentenStandardErrorvm_linealizacion,lineweaverburkStandardErrorvm_linealizacion,EadieScatchardStandardErrorvm_linealizacion,WoolfAugustinsonHofsteeStandardErrorvm_linealizacion,HanesWoolfStandardErrorvm_linealizacion)
-  StandardErrorkm_linealizacion <- c(michaelismentenStandardErrorkm_linealizacion,lineweaverburkStandardErrorkm_linealizacion,EadieScatchardStandardErrorkm_linealizacion,WoolfAugustinsonHofsteeStandardErrorkm_linealizacion,HanesWoolfStandardErrorkm_linealizacion)
 
 
-  df <- matrix(c(AIC, BIC,logLike, vmax, km, StandardErrorvm_delta, StandardErrorkm_delta,
-                 StandardErrorvm_linealizacion,StandardErrorkm_linealizacion), nrow = 5, ncol = 9, byrow = FALSE)
+  df <- matrix(c(AIC, BIC,logLike, vmax, km, StandardErrorvm_delta, StandardErrorkm_delta), nrow = 5, ncol = 7, byrow = FALSE)
   rownames(df) <- c('Michaelis-Menten','Lineweaver-Burk', 'Eadie-Scatchard',
                     'Woolf-Augustinson-Hofstee', 'Hanes-Woolf')
-  colnames(df) <- c('AIC','BIC','LogLikelihood','vmax','km','StandardErrorvm_delta','StandardErrorkm_delta',
-                    "StandardErrorvm_linearization",
-                    "StandardErrorkm_linearization")
+  colnames(df) <- c('AIC','BIC','LogLikelihood','vmax','km','StandardErrorvm_delta','StandardErrorkm_delta')
 
   #¿Which model is better?
   cat("The smallest value of the AIC is:", menorAIC, "corresponding to the model of", menorAICcolname, "\n")
@@ -210,8 +172,6 @@ ModelComparisonKineticEnzyme <- function(substrate,velocity){
   cat("The biggest maximum likelihood value is:", mayorlogLike, "corresponding to the model of", mayorlogLikecolname,"\n")
   cat("The model with the least standard error in delta method of vm is:", menorStandardErrorvm_delta, "corresponding to the model of", menorStandardErrorvm_deltacolname,"\n")
   cat("The model with the smallest standard error in delta method of km is:", menorStandardErrorkm_delta, "corresponding to the model of", menorStandardErrorkm_deltacolname,"\n")
-  cat("The model with the least standard error in covarianze method of vm is:", menorStandardErrorvm_linealizacion, "corresponding to the model of", menorStandardErrorvm_linealizacioncolname,"\n")
-  cat("The model with the smallest standard error in covarianze method of km is:", menorStandardErrorkm_linealizacion, "corresponding to the model of", menorStandardErrorkm_linealizacioncolname,"\n")
 
   return(df)
 

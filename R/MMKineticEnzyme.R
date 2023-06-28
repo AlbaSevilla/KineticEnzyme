@@ -143,8 +143,6 @@ MMKineticEnzyme <- function(substrate,velocity,removeoutliers=FALSE) {
                            logLike=logLike,
                            vmax=vmax, km=km,
                            StandardErrorvm=errorvm, StandardErrorkm=errorkm,
-                           StandardErrorvm_linealizacion=errorvm_linealizacion,
-                           StandardErrorkm_linealizacion=errorkm_linealizacion,
                            ConfidenceIntervalVmax=vmax_ci,ConfidenceIntervalKm=Km_ci)
   return(Resultados)
 }

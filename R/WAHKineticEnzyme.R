@@ -332,8 +332,6 @@ WAHKineticEnzyme <- function(substrate,velocity,removeoutliers=FALSE,deepening=F
   # Return the estimated parameters
   Resultados <- list(AIC = AIC, BIC = BIC,logLike=logLike, vmax=vmax, km=km,
                      StandardErrorvm_delta=errorvm_delta, StandardErrorkm_delta=errorkm_delta,
-                     StandardErrorvm_linealizacion=errorvm_linealizacion,
-                     StandardErrorkm_linealizacion=errorkm_linealizacion,
                      ANOVA,DurbinWatson,Resumen=wah_lm_summary)
   return(Resultados)
 }

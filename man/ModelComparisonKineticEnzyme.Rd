@@ -20,9 +20,6 @@ A data frame containing the following columns:
 \item{km}{Estimated Michaelis-Menten constant parameter for each model.}
 \item{StandardErrorvm_delta}{Standard error of the estimated maximum velocity parameter for each model using delta method.}
 \item{StandardErrorkm_delta}{Standard error of the estimated Michaelis-Menten constant parameter for each model using delta method.}
-\item{StandardErrorvm_linealizacion}{Standard error of the estimated maximum velocity parameter for each model using vcov method}
-\item{StandardErrorkm_linealizacion}{Standard error of the estimated Michaelis-Menten constant parameter for each model using vcov method.}
-
 
 The row names of the data frame correspond to the names of the enzyme kinetic models.
 
