@@ -312,8 +312,8 @@ HWKineticEnzyme <- function(substrate,velocity,removeoutliers=FALSE,deepening=FA
   errores_matriz_covarianza<-sqrt(diag(vcov(hw_lm)))
   covarianza <- matrizcovarianza[1,2]
   errores<-hw_lm_summary$coef[,2]
-  errorvm_delta<-(((errores[2])/(abs(one_divide_vm)))*(abs(vmax)))/(1)-2*covarianza
-  errorkm_delta<- (((errores[1]/km_divide_vm^2)-(errorvm_delta^2/vmax^2))*km^2)-2*covarianza
+  errorvm_delta<-(((errores[2])/(abs(one_divide_vm)))*(abs(vmax)))/(1)
+  errorkm_delta<- (((errores[1]/km_divide_vm^2)-(errorvm_delta^2/vmax^2))*km^2)
   ANOVA<-anova(hw_lm)
   DurbinWatson<-dwtest(hw_lm,alternative='two.sided')
   #Errores estándares
