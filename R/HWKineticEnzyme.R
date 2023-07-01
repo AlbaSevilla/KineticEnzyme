@@ -309,20 +309,26 @@ HWKineticEnzyme <- function(substrate,velocity,removeoutliers=FALSE,deepening=FA
   logLike<-logLik(hw_lm)
   hw_lm_summary <- summary(hw_lm)
   matrizcovarianza<-vcov(hw_lm)
-  errores_matriz_covarianza<-sqrt(diag(vcov(hw_lm)))
-  covarianza <- matrizcovarianza[1,2]
-  errores<-hw_lm_summary$coef[,2]
   errorvm_delta<-(((errores[2])/(abs(one_divide_vm)))*(abs(vmax)))/(1)
   errorkm_delta<- (((errores[1]/km_divide_vm^2)-(errorvm_delta^2/vmax^2))*km^2)
   ANOVA<-anova(hw_lm)
   DurbinWatson<-dwtest(hw_lm,alternative='two.sided')
-  #Errores estándares
-  matrizcovarianza<-vcov(hw_lm)
-  errores_matriz_covarianza<-sqrt(diag(vcov(hw_lm)))
-  covarianza <- matrizcovarianza[1,2]
-  errores_matriz_covarianza<-sqrt(diag(vcov(hw_lm)))
-  errorvm_linealizacion <- errores_matriz_covarianza[1]
-  errorkm_linealizacion <- errores_matriz_covarianza[2]
+
+  #MÉTODO DELTA
+  #Inferencia sobre vm
+  varianza_residual <- (summary(hw_lm)$sigma)**2
+  se_vm<-matrizcovarianza[1,1]
+  errorvm_delta <- (1/(one_divide_vm)^2)*se_vm
+
+  #Inferencia sobre km
+  x <- data$substrate
+  n <- length(x)
+  media_x <- mean(x)
+  varianza_x <- var(x)
+  beta_1 <- one_divide_vm
+  beta_0 <- km_divide_vm
+  varianza_vm_delta <- varianza_residual*((1/n)+((media_x)^2/((n-1)*varianza_x)))*(1/beta_1^2)+(varianza_residual/((n-1)*varianza_x))*(-beta_0/(beta_1)^2)-2*((-media_x*varianza_residual^2)/((n-1)*varianza_x))*(1/beta_1)*(-beta_0/beta_1)
+  errorkm_delta<-sqrt(varianza_vm_delta)
 
   # Return the estimated parameters
   Resultados <- list(AIC = AIC, BIC = BIC,logLike=logLike, vmax=vmax, km=km,

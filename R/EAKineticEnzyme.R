@@ -312,18 +312,30 @@ EAKineticEnzyme <- function(substrate,velocity,removeoutliers=FALSE,deepening=FA
   EadieS_lm_summary <- summary(EadieS_lm)
   errores<-EadieS_lm_summary$coef[,2]
   matrizcovarianza<-vcov(EadieS_lm)
+
   errores_matriz_covarianza<-sqrt(diag(vcov(EadieS_lm)))
   covarianza <- matrizcovarianza[1,2]
   errorkm_delta<-((errores[2]/abs(Km_est))*abs(km))/1
   errorvm_delta<-((errores[1]/vmax_km^2)-((errorkm_delta)^2/(km^2)))*(vmax^2)
   ANOVA<-anova(EadieS_lm)
   DurbinWatson<-dwtest(EadieS_lm,alternative='two.sided')
-  #Errores estándares
-  matrizcovarianza<-vcov(EadieS_lm)
-  errores_matriz_covarianza<-sqrt(diag(vcov(EadieS_lm)))
-  covarianza <- matrizcovarianza[1,2]
-  errorvm_linealizacion <- errores_matriz_covarianza[1]
-  errorkm_linealizacion <- errores_matriz_covarianza[2]
+
+  #### MÉTODO DELTA
+  #Inferencia sobre km
+  se_negative1_km <- matrizcovarianza[2,2]
+  errorkm_delta <- (1/(Km_est)^2)*se_negative1_km
+
+  #Inferencia sobre vm
+  x <- data$substrate
+  media_x <- mean(x)
+  beta_1 <- Km_est
+  beta_0 <- vmax_km
+  varianza_residual <- (summary(EadieS_lm)$sigma)**2
+  n <- length(x)
+  varianza_x <- var(x)
+  varianza_vm <- varianza_x*((1/n)+(media_x^2/(n-1)*varianza_x))*(1/(beta_1^2))+(varianza_residual/((n-1)*varianza_x))*(beta_0^2/beta_1^4)-2*((-media_x*varianza_residual)/((n-1)*varianza_x))*(-1/beta_1)*(beta_0/beta_1^2)
+  errorvm_delta <- sqrt(varianza_vm)
+
 
   # Return the estimated parameters
   Resultados <- list(AIC = AIC, BIC = BIC,logLike=logLike, vmax=vmax, km=km,
@@ -331,3 +343,4 @@ EAKineticEnzyme <- function(substrate,velocity,removeoutliers=FALSE,deepening=FA
                      ANOVA,DurbinWatson,Resumen=EadieS_lm_summary)
   return(Resultados)
 }
+

@@ -321,13 +321,6 @@ WAHKineticEnzyme <- function(substrate,velocity,removeoutliers=FALSE,deepening=F
   errorvm_delta<-errores[1]
   errorkm_delta<-errores[2]
   ANOVA<-anova(wah_lm)
-  #Errores estándares
-  matrizcovarianza<-vcov(wah_lm)
-  errores_matriz_covarianza<-sqrt(diag(vcov(wah_lm)))
-  covarianza <- matrizcovarianza[1,2]
-  errores_matriz_covarianza<-sqrt(diag(vcov(wah_lm)))
-  errorvm_linealizacion <- errores_matriz_covarianza[1]
-  errorkm_linealizacion <- errores_matriz_covarianza[2]
 
   # Return the estimated parameters
   Resultados <- list(AIC = AIC, BIC = BIC,logLike=logLike, vmax=vmax, km=km,

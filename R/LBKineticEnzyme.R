@@ -299,6 +299,22 @@ LBKineticEnzyme <- function(substrate,velocity,removeoutliers=FALSE,deepening=FA
   errorvm_linealizacion <- errores_matriz_covarianza[1]
   errorkm_linealizacion <- errores_matriz_covarianza[2]
 
+
+  # MÉTODO DELTA
+  #Inferencia sobre vm
+  se_vm <- matrizcovarianza[1,1]
+  errorvm_delta <- (1/(one_divide_vm)^2)*se_vm
+  #Inferencia sobre km
+  varianza_residual <- (summary(lb_lm)$sigma)**2
+  x = 1/data$substrate
+  n <- length(x)
+  beta_0 <- one_divide_vm
+  beta_1 <- km_vm
+  media_x <- mean(x)
+  varianza_x <- var(x)
+  varianza_km <- varianza_residual*((1/n)+((media_x)^2/((n-1)*varianza_x))*(-beta_1/beta_0^2))+(varianza_residual/((n-1)*varianza_x))*(1/beta_0^2)-2*((-media_x*varianza_residual^2)/((n-1)*varianza_x))*(-beta_1/beta_0)*(1/beta_1)
+  errorkm_delta <- sqrt(varianza_km)
+
   # Return the estimated parameters
   Resultados <- list(AIC = AIC, BIC = BIC,logLike=logLike, vmax=vmax, km=km,
                      StandardErrorvm_delta=errorvm_delta,
